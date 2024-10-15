@@ -1,5 +1,7 @@
 <?php 
 
+namespace Palmo;
+
 class Router 
 {
     private $routes;

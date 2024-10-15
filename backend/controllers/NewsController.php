@@ -1,5 +1,6 @@
 <?php 
-include_once ROOT. '/models/News.php';
+
+use Palmo\models\News;
 
 class NewsController {
 

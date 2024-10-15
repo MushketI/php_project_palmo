@@ -1,16 +1,17 @@
 <?php 
 
-//Front Controller
+use Palmo\Router;
+use Palmo\config\Db;
 
 //1. Общие настройки:
+require __DIR__ . '/vendor/autoload.php';
+
+//Вывод errors:
 ini_set('display_error', 1);
 error_reporting(E_ALL);
 
-//2. Подключение файлов системы:\
-require 'vendor/autoload.php';
+//2. Подключение файлов системы:
 define('ROOT', dirname(__FILE__));
-require_once(ROOT. '/Router.php');
-require_once(ROOT. '/config/Db.php');
 
 //3. Вызов Router
 $router = new Router();

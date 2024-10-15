@@ -1,5 +1,7 @@
 <?php 
 
+namespace Palmo\config;
+
 class Db 
 {
     public static function getConnection() 
@@ -11,7 +13,7 @@ class Db
         $password = 'sql_course';
 
         $dsn = "mysql:host=$host;port=$port;dbname=$dbname";
-        $db = new PDO($dsn, $user, $password);
+        $db = new \PDO($dsn, $user, $password);
 
         return $db;
     }

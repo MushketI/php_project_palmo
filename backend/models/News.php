@@ -1,5 +1,9 @@
 <?php 
 
+namespace Palmo\models;
+
+use Palmo\config\Db;
+
 class News 
 {
     /**
@@ -17,7 +21,7 @@ class News
 
             $result = $db->query('SELECT * FROM news WHERE id=' . $id);
 
-            $result->setFetchMode(PDO::FETCH_ASSOC);
+            $result->setFetchMode(\PDO::FETCH_ASSOC);
             $newsItem = $result->fetch();
 
             return $newsItem;
