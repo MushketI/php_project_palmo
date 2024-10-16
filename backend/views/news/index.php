@@ -8,6 +8,10 @@
 </head>
 
 <body>
+    <form action="../seeds/script.php" method="POST">
+        <button>seeds</button>
+    </form>
+
     <?php foreach ($newsList as $value) :?>
 
     <div><?php echo $value['title']; ?> </div>
