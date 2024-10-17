@@ -11,10 +11,28 @@
 
     <div class="w-7/12 h-20 flex mx-auto">
         <div class="w-6/12 flex items-center bg-slate-200">
-            <!-- <Search /> -->
+            <form @submit.prevent="getSearch()" class="p-5 flex">
+                <input type="text" class="w-64 text-slate-700" placeholder="Search" />
+                <button class="flex justify-center items-center bg-slate-300 opacity-60 w-8">
+                    <img src="../../../assets/img/free-icon-search-6368029.png" class="h-5 opacity-60" alt="" />
+                </button>
+            </form>
         </div>
         <div class="w-6/12 flex justify-end items-center pr-5 bg-slate-200">
-            <!-- <Select /> -->
+            <div class="flex flex-col">
+                <form method="GET">
+                    <select name="select">
+                        <option value="" selected disabled hidden>Choose here</option>
+                        <option value="<?php null ?>" class="bg-slate-300">All movies</option>
+                        <?php foreach($categories as $category) :?>
+                        <option value="<?php echo $category['name'] ?>">
+                            <?php echo $category['name'] ?>
+                        </option>
+                        <?php endforeach ?>
+                    </select>
+                    <button formmethod="get" type="submit" class="w-20 bg-slate-100">Выбрать</button>
+                </form>
+            </div>
         </div>
     </div>
     <div class="w-7/12 mt-5 mx-auto  p-5  bg-slate-200">
@@ -48,7 +66,7 @@
         <!-- <Pagination /> -->
     </div>
 
-    <script src="https://cdn.tailwindcss.com"></script>
+
 </body>
 
 </html>
