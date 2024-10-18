@@ -7,9 +7,9 @@ use Palmo\config\Db;
 class Movies {
     
     /**
-     * Returnes singles news item with specifield id
-     * @param integer $id
-     */
+    * Returnes singles news item with specifield id
+    * @param integer $id
+    */
 
     public static function getMoviesItemById($id) {
 
@@ -38,16 +38,18 @@ class Movies {
     }
 
     /**
-     * Returns an array of news items
-     */
+    * Returns an array of news items
+    */
 
-    public static function getMoviesList() {
+    public static function getMoviesList($page = 1) {
 
         $db = Db::getConnection();
 
         $moviesList = [];
 
-        $result = $db->query('SELECT * FROM movies LIMIT 20');
+        $offset = ($page - 1) * 20;
+   
+        $result = $db->query("SELECT * FROM movies LIMIT 20 OFFSET $offset");
 
         $i = 0;
         while($row = $result->fetch()) {
@@ -111,9 +113,9 @@ class Movies {
     } 
 
     /**
-     * Returns an array of news items by search
-     * @param string $search
-     */
+    * Returns an array of news items by search
+    * @param string $search
+    */
 
     public static function getMoviesBySearch($search) {
 
@@ -143,5 +145,16 @@ class Movies {
         }
 
         return $moviesList;
+    }
+
+    public static function getTotalMovies() {
+
+        $db = Db::getConnection();
+
+        $result = $db->query('SELECT count(id) as count FROM movies');
+
+        $row = $result->fetch(\PDO::FETCH_ASSOC);
+       
+        return $row['count'];
     }
 }

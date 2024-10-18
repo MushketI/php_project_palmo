@@ -1,6 +1,7 @@
 <?php
 
 use Palmo\models\Categories;
+use Palmo\service\Pagination;
 use Palmo\models\Movies;
 use Palmo\service\View;
 
@@ -20,16 +21,19 @@ class MoviesController {
     * @return array
     */
 
-    public function actionIndex() {
-        
+    public function actionIndex($page = 1) {
+
+        $total = Movies::getTotalMovies();
+        $pagination = new Pagination($total, $page, 20, 'page');
+
         $view = new View();
         $view->component("/views/header/header.php");
 
-        $moviesList = Movies::getMoviesList();
+        $moviesList = Movies::getMoviesList($page);
         $categories = Categories::getCategoriesList();
 
         if(isset($_GET['search'])) {
-            
+
             $search = $_GET['search'];
 
             $moviesList = Movies::getMoviesBySearch($search);
@@ -51,7 +55,7 @@ class MoviesController {
             }
 
             $moviesList = Movies::getMoviesByCategory($categoryName);
-
+           
             require_once(ROOT."/views/movie/movies/viewMovies.php");
             
             return true;

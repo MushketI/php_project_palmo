@@ -23,11 +23,12 @@
             <div class="flex flex-col">
                 <form method="GET">
                     <select name="select">
-                        <option value="" selected disabled hidden>Categories</option>
-                        <option value="<?php null ?>" class="bg-slate-300">All movies</option>
+                        <option value="" class="bg-slate-300">All movies</option>
                         <?php foreach($categories as $category) :?>
-                        <option value="<?php echo $category['name'] ?>">
-                            <?php echo $category['name'] ?>
+                        <option value="<?php echo $category['name']; ?>"
+                            <?php echo isset($_GET['select']) && $_GET['select'] === $category['name'] ? 'class=bg-blue-600' : '' ?>
+                            <?php echo isset($_GET['select']) && $_GET['select'] === $category['name'] ? 'selected' : '' ?>>
+                            <?php echo $category['name']; ?>
                         </option>
                         <?php endforeach ?>
                     </select>
@@ -64,9 +65,11 @@
             </div>
             <?php endforeach ?>
         </div>
-        <!-- <Pagination /> -->
-    </div>
 
+    </div>
+    <div class="w-7/12 mx-auto mb-10 pb-5 flex justify-center bg-slate-200">
+        <?php echo $pagination->get() ?>
+    </div>
 
 </body>
 
