@@ -9,7 +9,7 @@ class Categories {
     /**
      * Returns an array of news items
      */
-    
+
     public static function getCategoriesList() {
 
         $db = Db::getConnection();

@@ -19,19 +19,22 @@ class Movies {
 
             $db = Db::getConnection();
 
-            $result = $db->query('SELECT * FROM movies WHERE id=' . $id);
-            
-            $result->setFetchMode(\PDO::FETCH_ASSOC);
-            $newsItem = $result->fetch();
+            $result = $db->prepare("SELECT * FROM movies WHERE id = :id");
+            $result->execute(['id' => $id]);
 
-            $category = $db->query(
+            $newsItem = $result->fetch(\PDO::FETCH_ASSOC);
+
+            $category = $db->prepare(
                 "SELECT GROUP_CONCAT(categories.name SEPARATOR ', ') AS categories FROM movies 
                 JOIN movie_category ON movies.id = movie_category.movie_id 
                 JOIN categories ON movie_category.category_id = categories.id
-                WHERE movies.id = $id 
-                GROUP BY movies.id")->fetch(\PDO::FETCH_ASSOC);
+                WHERE movies.id = :id 
+                GROUP BY movies.id");
 
-            $newsItem['categories'] = $category;
+            $category->execute(['id' => $id]);
+            $categories = $category->fetch(\PDO::FETCH_ASSOC);
+            
+            $newsItem['categories'] = $categories;
             
             return $newsItem;
         }
@@ -48,22 +51,27 @@ class Movies {
         $moviesList = [];
 
         $offset = ($page - 1) * 20;
-   
-        $result = $db->query("SELECT * FROM movies LIMIT 20 OFFSET $offset");
+
+        $result = $db->prepare("SELECT * FROM movies LIMIT 20 OFFSET :offset");
+        $result->bindValue(':offset', $offset, \PDO::PARAM_INT);
+        $result->execute();
 
         $i = 0;
         while($row = $result->fetch()) {
 
-            $category = $db->query(
+            $category = $db->prepare(
                     "SELECT GROUP_CONCAT(categories.name SEPARATOR ', ') AS categories FROM movies 
                     JOIN movie_category ON movies.id = movie_category.movie_id 
                     JOIN categories ON movie_category.category_id = categories.id
-                    WHERE movies.id = $row[id] 
-                    GROUP BY movies.id")->fetch(\PDO::FETCH_ASSOC);
+                    WHERE movies.id = :id
+                    GROUP BY movies.id");
+
+            $category->execute(['id' => $row['id']]);
+            $categories = $category->fetch(\PDO::FETCH_ASSOC);
 
             $moviesList[$i]['id'] = $row['id'];
             $moviesList[$i]['title'] = $row['title'];
-            $moviesList[$i]['categories'] = $category;
+            $moviesList[$i]['categories'] = $categories;
             $moviesList[$i]['overview'] = $row['overview'];
             $moviesList[$i]['poster_path'] = $row['poster_path'];
             $moviesList[$i]['release_date'] = $row['release_date'];
@@ -84,25 +92,30 @@ class Movies {
 
         $moviesList = [];
 
-        $result = $db->query("SELECT movies.* FROM movies 
+        $result = $db->prepare("SELECT movies.* FROM movies 
                 JOIN movie_category ON movies.id = movie_category.movie_id 
                 JOIN categories ON movie_category.category_id = categories.id 
-                WHERE categories.name = '$categoryName'
+                WHERE categories.name = :categoryName
                 LIMIT 20");
         
+        $result->execute(['categoryName' => $categoryName]);
+
         $i = 0;
         while($row = $result->fetch()) {
 
-            $category = $db->query(
+            $category = $db->prepare(
                 "SELECT GROUP_CONCAT(categories.name SEPARATOR ', ') AS categories FROM movies 
                 JOIN movie_category ON movies.id = movie_category.movie_id 
                 JOIN categories ON movie_category.category_id = categories.id
-                WHERE movies.id = $row[id] 
-                GROUP BY movies.id")->fetch(\PDO::FETCH_ASSOC);
+                WHERE movies.id = :id 
+                GROUP BY movies.id");
+
+            $category->execute(['id' => $row['id']]);
+            $categories = $category->fetch(\PDO::FETCH_ASSOC);
 
             $moviesList[$i]['id'] = $row['id'];
             $moviesList[$i]['title'] = $row['title'];
-            $moviesList[$i]['categories'] = $category;
+            $moviesList[$i]['categories'] = $categories;
             $moviesList[$i]['overview'] = $row['overview'];
             $moviesList[$i]['poster_path'] = $row['poster_path'];
             $moviesList[$i]['release_date'] = $row['release_date'];
@@ -123,21 +136,25 @@ class Movies {
 
         $moviesList = [];
 
-        $result = $db->query("SELECT * FROM movies where title like '%$search%' LIMIT 20");
+        $result = $db->prepare("SELECT * FROM movies where title like :search LIMIT 20");
+        $result->execute(['search' => "%" . $search . "%"]);
 
         $i = 0;
         while($row = $result->fetch()) {
 
-            $category = $db->query(
+            $category = $db->prepare(
                 "SELECT GROUP_CONCAT(categories.name SEPARATOR ', ') AS categories FROM movies 
                 JOIN movie_category ON movies.id = movie_category.movie_id 
                 JOIN categories ON movie_category.category_id = categories.id
-                WHERE movies.id = $row[id] 
-                GROUP BY movies.id")->fetch(\PDO::FETCH_ASSOC);
+                WHERE movies.id = :id 
+                GROUP BY movies.id");
             
+            $category->execute(['id' => $row['id']]);
+            $categories = $category->fetch(\PDO::FETCH_ASSOC);
+
             $moviesList[$i]['id'] = $row['id'];
             $moviesList[$i]['title'] = $row['title'];
-            $moviesList[$i]['categories'] = $category;
+            $moviesList[$i]['categories'] = $categories;
             $moviesList[$i]['overview'] = $row['overview'];
             $moviesList[$i]['poster_path'] = $row['poster_path'];
             $moviesList[$i]['release_date'] = $row['release_date'];
