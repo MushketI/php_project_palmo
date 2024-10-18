@@ -5,6 +5,10 @@ namespace Palmo\models;
 use Palmo\config\Db;
 
 class Categories {
+
+    /**
+     * Returns an array of news items
+     */
     
     public static function getCategoriesList() {
 

@@ -71,6 +71,11 @@ class Movies {
         return $moviesList;
     } 
 
+     /**
+     * Returns an array of news items by category
+     * @param string $categoryName
+     */
+
     public static function getMoviesByCategory($categoryName) {
 
         $db = Db::getConnection();
@@ -104,4 +109,39 @@ class Movies {
 
         return $moviesList;
     } 
+
+    /**
+     * Returns an array of news items by search
+     * @param string $search
+     */
+
+    public static function getMoviesBySearch($search) {
+
+        $db = Db::getConnection();
+
+        $moviesList = [];
+
+        $result = $db->query("SELECT * FROM movies where title like '%$search%' LIMIT 20");
+
+        $i = 0;
+        while($row = $result->fetch()) {
+
+            $category = $db->query(
+                "SELECT GROUP_CONCAT(categories.name SEPARATOR ', ') AS categories FROM movies 
+                JOIN movie_category ON movies.id = movie_category.movie_id 
+                JOIN categories ON movie_category.category_id = categories.id
+                WHERE movies.id = $row[id] 
+                GROUP BY movies.id")->fetch(\PDO::FETCH_ASSOC);
+            
+            $moviesList[$i]['id'] = $row['id'];
+            $moviesList[$i]['title'] = $row['title'];
+            $moviesList[$i]['categories'] = $category;
+            $moviesList[$i]['overview'] = $row['overview'];
+            $moviesList[$i]['poster_path'] = $row['poster_path'];
+            $moviesList[$i]['release_date'] = $row['release_date'];
+            $i++;            
+        }
+
+        return $moviesList;
+    }
 }
