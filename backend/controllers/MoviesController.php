@@ -23,8 +23,9 @@ class MoviesController {
 
     public function actionIndex($page = 1) {
 
-        $total = Movies::getTotalMovies();
-        $pagination = new Pagination($total, $page, 20, 'page');
+        $total = Movies::getTotalMovies('movies');
+   
+        $pagination = new Pagination($total, $page, 20);
 
         $view = new View();
         $view->component("/views/header/header.php");
@@ -36,10 +37,12 @@ class MoviesController {
 
             $search = $_GET['search'];
 
-            $moviesList = Movies::getMoviesBySearch($search);
+            $total = Movies::getTotalMovies('search', $search);
+            $pagination = new Pagination($total, $page, 20);
+
+            $moviesList = Movies::getMoviesBySearch($search, $page);
 
             require_once(ROOT."/views/movie/movies/viewMovies.php");
-
             return true;
         }
         
@@ -47,22 +50,22 @@ class MoviesController {
 
             $categoryName = $_GET['select'];
 
+            $total = Movies::getTotalMovies('select', $categoryName);
+            $pagination = new Pagination($total, $page, 20);
+
             if (!in_array($categoryName, array_column($categories, 'name'))) {
 
                 $view->component('/views/pageNotFound/pageNotFound.php');
-
                 return true;
             }
 
-            $moviesList = Movies::getMoviesByCategory($categoryName);
+            $moviesList = Movies::getMoviesByCategory($categoryName, $page);
            
             require_once(ROOT."/views/movie/movies/viewMovies.php");
-            
             return true;
         }
        
         require_once(ROOT."/views/movie/movies/viewMovies.php");
-        
         return true;
     }
 
@@ -86,12 +89,10 @@ class MoviesController {
             if (!in_array($id, $movieItem)) {
                 
                 $view->component('/views/pageNotFound/pageNotFound.php');
-
                 return true;
             }
            
             require_once(ROOT."/views/movie/singMovie/viewSingMovie.php");
-
             return true;
         } 
     }

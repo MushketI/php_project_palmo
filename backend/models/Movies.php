@@ -86,9 +86,11 @@ class Movies {
      * @param string $categoryName
      */
 
-    public static function getMoviesByCategory($categoryName) {
+    public static function getMoviesByCategory($categoryName, $page = 1) {
 
         $db = Db::getConnection();
+
+        $offset = ($page - 1) * 20;
 
         $moviesList = [];
 
@@ -96,9 +98,13 @@ class Movies {
                 JOIN movie_category ON movies.id = movie_category.movie_id 
                 JOIN categories ON movie_category.category_id = categories.id 
                 WHERE categories.name = :categoryName
-                LIMIT 20");
+                LIMIT 20 OFFSET :offset");
         
-        $result->execute(['categoryName' => $categoryName]);
+        $result->bindValue(':offset', $offset, \PDO::PARAM_INT);
+        $result->bindValue(':categoryName', $categoryName, \PDO::PARAM_STR);
+        
+        $result->execute();
+
 
         $i = 0;
         while($row = $result->fetch()) {
@@ -130,14 +136,20 @@ class Movies {
     * @param string $search
     */
 
-    public static function getMoviesBySearch($search) {
+    public static function getMoviesBySearch($search, $page = 1) {
 
         $db = Db::getConnection();
 
         $moviesList = [];
 
-        $result = $db->prepare("SELECT * FROM movies where title like :search LIMIT 20");
-        $result->execute(['search' => "%" . $search . "%"]);
+        $offset = ($page - 1) * 20;
+
+        $result = $db->prepare("SELECT * FROM movies WHERE title LIKE :search LIMIT 20 OFFSET :offset");
+
+        $result->bindValue(':offset', $offset, \PDO::PARAM_INT);
+        $result->bindValue(':search', "%" . $search . "%", \PDO::PARAM_STR);
+
+        $result->execute();
 
         $i = 0;
         while($row = $result->fetch()) {
@@ -164,14 +176,46 @@ class Movies {
         return $moviesList;
     }
 
-    public static function getTotalMovies() {
+      /**
+     * Returns an count movies by params 
+     * @param string $param 
+     * @param string $str
+     */
+
+
+    public static function getTotalMovies($param, $str = null) {
 
         $db = Db::getConnection();
 
-        $result = $db->query('SELECT count(id) as count FROM movies');
+        if($param === 'movies') {
 
-        $row = $result->fetch(\PDO::FETCH_ASSOC);
-       
-        return $row['count'];
+            $row = $db->query('SELECT COUNT(id) as count FROM movies');
+            $total = $row->fetch(\PDO::FETCH_ASSOC);
+           
+            return $total['count'];
+        }
+
+        if($param === 'search') {
+
+            $row = $db->prepare("SELECT COUNT(id) as count FROM movies WHERE title LIKE :search");
+            $row->execute(['search' => "%" . $str . "%"]);
+            $total= $row->fetch(\PDO::FETCH_ASSOC);
+
+            return $total['count'];
+         
+        }
+
+        if($param === 'select') {
+            
+            $row = $db->prepare("SELECT COUNT(movies.id) AS count FROM movies
+                JOIN movie_category ON movies.id = movie_category.movie_id
+                JOIN categories ON movie_category.category_id = categories.id
+                WHERE categories.name = :categoryName");
+            $row->execute(['categoryName' =>  $str ]);
+            $total= $row->fetch(\PDO::FETCH_ASSOC);
+
+            return $total['count'];
+
+        }
     }
 }
