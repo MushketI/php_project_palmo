@@ -22,9 +22,9 @@ class UserController {
      
         if(isset($_POST['register'])) {
 
-            $name = $_POST['name'];
-            $email = $_POST['email'];
-            $password = $_POST['password'];
+            $name = htmlspecialchars($_POST['name']);
+            $email = htmlspecialchars($_POST['email']);
+            $password = htmlspecialchars($_POST['password']);
 
             $errors = false;
 
@@ -73,10 +73,10 @@ class UserController {
 
         if(isset($_POST['login'])) {
 
-            $email = $_POST['email'];
-            $password = $_POST['password'];
+            $email = htmlspecialchars($_POST['email']);
+            $password = htmlspecialchars($_POST['password']);
 
-            $hashPassword = Validation::getPasswordForEmail('Test@gmail.com');   
+            $hashPassword = Validation::getPasswordForEmail($email);   
 
             $errors = false;
 

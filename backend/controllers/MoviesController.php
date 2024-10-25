@@ -37,7 +37,7 @@ class MoviesController {
 
         if(isset($_GET['search'])) {
 
-            $search = $_GET['search'];
+            $search = htmlspecialchars($_GET['search']);
 
             $total = Movies::getTotalMovies('search', $search);
             $pagination = new Pagination($total, $page, 20);
@@ -50,8 +50,8 @@ class MoviesController {
         
         if(isset($_GET['select'][0])) {
 
-            $categoryName = $_GET['select'];
-
+            $categoryName = htmlspecialchars($_GET['select']);
+            
             $total = Movies::getTotalMovies('select', $categoryName);
             $pagination = new Pagination($total, $page, 20);
 

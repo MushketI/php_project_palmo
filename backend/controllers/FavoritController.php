@@ -7,7 +7,7 @@ class FavoritController {
 
     public function actionAdd() {
         
-        $movieId = $_POST['id'];
+        $movieId = htmlspecialchars($_POST['id']);
         $auth = authMiddlewares::auth();
 
         if(!$auth) {
@@ -26,7 +26,7 @@ class FavoritController {
 
     public function actionRemove() {
 
-        $movieId = $_POST['id'];
+        $movieId = htmlspecialchars($_POST['id']);
         $auth = authMiddlewares::auth();
 
         if(!$auth) {
