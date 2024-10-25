@@ -16,10 +16,22 @@
             </div>
             <div class="w-9/12">
                 <div class="flex justify-end">
-                    <button @click="addToFavorite" class="text-4xl text-yellow-400">
-                        <!-- {{ isFavorite ? "&#9733;" : "&#9734;" }} -->
-                        &#9734;
-                    </button>
+                    <?php if($favorit): ?>
+                    <form action="/favorit/remove" method="POST">
+                        <input type="hidden" name="id" value="<?php echo $movieItem['id'] ?>">
+                        <button class="text-4xl text-yellow-400">&#9733;</button>
+                    </form>
+                    <?php else: ?>
+                    <form action="/favorit/add" method="POST">
+                        <input type="hidden" name="id" value="<?php echo $movieItem['id'] ?>">
+                        <button class="text-4xl text-yellow-400">&#9734;</button>
+                    </form>
+                    <?php endif ?>
+                    <!-- <button @click="addToFavorite" class="text-4xl text-yellow-400">
+                        {{ isFavorite ? "&#9733;" : "&#9734;" }}
+                    &#9734;
+                    add
+                    </button> -->
                 </div>
                 <h1 class="text-xl font-semibold ml-36 mb-2">
                     <?php echo $movieItem['title'] ?>

@@ -3,6 +3,7 @@
 use Palmo\models\User;
 use Palmo\service\View;
 use Palmo\service\Validation;
+use Palmo\middlewares\authMiddlewares;
 
 class UserController {
     
@@ -13,8 +14,11 @@ class UserController {
         $password = "";
         $result = false;
 
-        $view = new View();
-        $view->component("/views/header/header.php");
+        $auth = authMiddlewares::auth();
+
+        if($auth) {
+            header('Location: /movies');
+        }
      
         if(isset($_POST['register'])) {
 
@@ -48,6 +52,9 @@ class UserController {
             }
         }
 
+        $view = new View();
+        $view->component("/views/header/header.php");
+
         require_once(ROOT."/views/auth/register/register.php");
         return true;
 
@@ -57,6 +64,12 @@ class UserController {
 
         $email = "Test@gmail.com";
         $password = 123456789;
+
+        $auth = authMiddlewares::auth();
+
+        if($auth) {
+            header('Location: /movies');
+        }
 
         if(isset($_POST['login'])) {
 
@@ -75,9 +88,9 @@ class UserController {
                 $errors[] = 'Password is not valid';
             }
 
-            $userId = User::login($email);
+            $user = User::login($email);
 
-            if($userId == false) {
+            if($user == false) {
 
                 $errors[] = 'Неверный email';
                 
@@ -85,7 +98,7 @@ class UserController {
                 
                 if (password_verify($password, $hashPassword)) {
 
-                    User::auth($userId);
+                    User::auth($user);
                     header('Location: /movies');
                     
                 } else {
@@ -93,6 +106,7 @@ class UserController {
                 } 
             }
         }
+        
 
         $view = new View();
         $view->component('/views/header/header.php');
@@ -102,7 +116,9 @@ class UserController {
     }
 
     public function actionLogout() {
-        unset($_SESSION['user']);
+        unset($_SESSION['id']);
+        unset($_SESSION['name']);
+        unset($_SESSION['email']);
         header('Location: /movies');
     }
  }

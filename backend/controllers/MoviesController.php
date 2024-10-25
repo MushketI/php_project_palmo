@@ -1,6 +1,8 @@
 <?php
 
+use Palmo\middlewares\authMiddlewares;
 use Palmo\models\Categories;
+use Palmo\models\Favorit;
 use Palmo\service\Pagination;
 use Palmo\models\Movies;
 use Palmo\service\View;
@@ -85,6 +87,10 @@ class MoviesController {
             $view->component("/views/header/header.php");
 
             $movieItem = Movies::getMoviesItemById($id);
+
+            $auth = authMiddlewares::auth();
+
+            $favorit = Favorit::searchMovieForFavorit($movieItem['id'], $auth);
 
             if (!in_array($id, $movieItem)) {
                 

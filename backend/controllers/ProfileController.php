@@ -1,6 +1,7 @@
 <?php
 
 use Palmo\middlewares\authMiddlewares;
+use Palmo\models\Favorit;
 use Palmo\service\View;
 
 
@@ -14,6 +15,8 @@ class ProfileController {
 
             $view = new View();
             $view->component('/views/header/header.php');
+
+            $moviesList = Favorit::getFavoritMoviesByUser($auth);
 
             require_once(ROOT."/views/profile/profile.php");
             

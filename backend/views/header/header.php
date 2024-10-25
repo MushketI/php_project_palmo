@@ -13,14 +13,14 @@
         <div class="w-8/12 flex justify-center items-center gap-5">
             <div class="flex gap-5">
                 <a href="/movies" class="hover:text-slate-100">Movies</a>
-                <?php if(!isset($_SESSION['user'])):  ?>
+                <?php if(!isset($_SESSION['id'])):  ?>
                 <a href="/user/login" class="hover:text-slate-100">Login</a>
                 <?php endif ?>
                 <a href="/profile" class="hover:text-slate-100">Profile</a>
             </div>
-            <?php if(isset($_SESSION['user'])):  ?>
+            <?php if(isset($_SESSION['id'])):  ?>
             <div class="flex ml-10 gap-5">
-                <span class="block font-semibold text-slate-900 cursor-pointer"><?php echo $_SESSION['user'] ?></span>
+                <span class="block font-semibold text-slate-900 cursor-pointer"><?php echo $_SESSION['name'] ?></span>
                 <a href="/user/logout" class="block hover:text-slate-100">Exit</a>
             </div>
             <?php endif ?>

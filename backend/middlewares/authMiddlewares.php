@@ -6,8 +6,8 @@ class authMiddlewares {
     
     public static function auth() {
 
-        if(isset($_SESSION['user'])) {
-            return $_SESSION['user'];
+        if(isset($_SESSION['id'])) {
+            return $_SESSION['id'];
         } else {
             return false;
         }

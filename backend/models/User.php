@@ -30,13 +30,24 @@ class User {
         $user = $result->fetch();
 
         if($user) {
-            return $user['id'];
+
+            $user = [
+                'id' => $user['id'],
+                'name' => $user['name'],
+                'email' => $user['email']
+            ];
+
+            return $user;
         }
 
         return false;
     }
 
-    public static function auth($userId) {
-        $_SESSION['user'] = $userId;
+    public static function auth($user) {
+        $_SESSION['id'] = $user['id'];
+        $_SESSION['name'] = $user['name'];
+        $_SESSION['email'] = $user['email'];
     }
+
+
 }
