@@ -5,6 +5,7 @@ use Palmo\config\Db;
 
 //1. Общие настройки:
 require __DIR__ . '/vendor/autoload.php';
+session_start();
 
 //Вывод errors:
 ini_set('display_error', 1);
