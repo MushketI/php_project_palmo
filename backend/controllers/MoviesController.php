@@ -1,9 +1,9 @@
 <?php
 
 use Palmo\middlewares\authMiddlewares;
+use Palmo\service\Pagination;
 use Palmo\models\Categories;
 use Palmo\models\Favorit;
-use Palmo\service\Pagination;
 use Palmo\models\Movies;
 use Palmo\service\View;
 
@@ -35,6 +35,8 @@ class MoviesController {
         $moviesList = Movies::getMoviesList($page);
         $categories = Categories::getCategoriesList();
 
+        $errors = false;
+
         if(isset($_GET['search'])) {
 
             $search = htmlspecialchars($_GET['search']);
@@ -43,6 +45,10 @@ class MoviesController {
             $pagination = new Pagination($total, $page, 20);
 
             $moviesList = Movies::getMoviesBySearch($search, $page);
+
+            if(count($moviesList) == 0) {
+                $errors = 'Фильмы не найдены';
+            }
 
             require_once(ROOT."/views/movie/movies/viewMovies.php");
             return true;
@@ -55,15 +61,20 @@ class MoviesController {
             $total = Movies::getTotalMovies('select', $categoryName);
             $pagination = new Pagination($total, $page, 20);
 
-            if (!in_array($categoryName, array_column($categories, 'name'))) {
-
-                $view->component('/views/pageNotFound/pageNotFound.php');
-                return true;
-            }
-
             $moviesList = Movies::getMoviesByCategory($categoryName, $page);
+
+            if(count($moviesList) == 0) {
+                $errors = 'Фильмы не найдены';
+            }
            
             require_once(ROOT."/views/movie/movies/viewMovies.php");
+            return true;
+        }
+
+
+
+        if(!$moviesList) {
+            $view->component('/views/pageNotFound/pageNotFound.php');
             return true;
         }
        
@@ -90,14 +101,14 @@ class MoviesController {
 
             $auth = authMiddlewares::auth();
 
-            $favorit = Favorit::searchMovieForFavorit($movieItem['id'], $auth);
-
             if (!in_array($id, $movieItem)) {
                 
                 $view->component('/views/pageNotFound/pageNotFound.php');
                 return true;
             }
-           
+            
+            $favorit = Favorit::searchMovieForFavorit($movieItem['id'], $auth);
+
             require_once(ROOT."/views/movie/singMovie/viewSingMovie.php");
             return true;
         } 

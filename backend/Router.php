@@ -40,10 +40,6 @@ class Router
         //Проверить наличие такого запроса в routes.php
         foreach($this->routes as $uriPattern => $path) {
             
-            //path - movies/index
-            //uriPattern - movies
-            //uri - movies?select=14
-            
             //Сравниваем $uriPattern и $uri
             if(preg_match("~$uriPattern~", $uri)) {
 
@@ -60,31 +56,27 @@ class Router
                 $actionName = 'action'.ucfirst(array_shift($segments));
                
                 $parameters = $segments;
-
-                
-                 // echo '<pre>';
-                // print_r('$uri -> ' . $uri . '<br>');
-                // print_r('$uriPattern -> ' . $uriPattern . '<br>');
-                // print_r('$path -> ' . $path . '<br>');
-                // print_r('$internalRouter -> ' . $internalRouter . '<br>');
-                // print_r($segments);
-                // print_r($this->routes);
-                // echo '</pre>';
-                // die;
                 
                 //Подключить файл класса-контроллера
                 $controllerFile = ROOT . '/controllers/' . $controllerName . '.php';
 
                 if(file_exists($controllerFile)) {
                     include_once($controllerFile);
+                } else {
+                    include_once(ROOT . '/views/pageNotFound/pageNotFound.php');
+                    break;
                 }
 
                 //Создать обьект, вызвать метод (т.е. action)
                 $controllerObject = new $controllerName;
 
-                $result = call_user_func_array(array($controllerObject, $actionName), $parameters);
-                
-
+              
+                if(method_exists($controllerObject, $actionName)) {
+                    $result = call_user_func_array(array($controllerObject, $actionName), $parameters);
+                } else {
+                    include_once(ROOT . '/views/pageNotFound/pageNotFound.php');
+                }
+        
                 //old:
                 // $result = $controllerObject->$actionName($parameters);
 

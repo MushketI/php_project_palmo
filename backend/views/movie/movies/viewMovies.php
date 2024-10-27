@@ -39,6 +39,9 @@
     </div>
     <div class="w-7/12 mt-5 mx-auto  p-5  bg-slate-200">
         <div class="flex flex-wrap gap-7 pb-5">
+            <?php if($errors): ?>
+            <h2 class="text-slate-600 text-xl"><?php echo $errors ?></h2>
+            <?php endif ?>
             <?php foreach($moviesList as $value) :?>
             <div class="w-60 bg-white cursor-pointer">
                 <a href="<?php echo '/movies/' . $value['id'] ?>">

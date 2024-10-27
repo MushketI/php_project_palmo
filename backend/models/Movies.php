@@ -15,7 +15,7 @@ class Movies {
 
         $id = intval($id);
 
-        if($id) {
+        if($id != 'string') {
 
             $db = Db::getConnection();
 
@@ -37,6 +37,8 @@ class Movies {
             $newsItem['categories'] = $categories;
             
             return $newsItem;
+        } else {
+            return false;
         }
     }
 
@@ -49,6 +51,10 @@ class Movies {
         $db = Db::getConnection();
 
         $moviesList = [];
+
+        if(!is_numeric($page)) {
+            return false;
+        } 
 
         $offset = ($page - 1) * 20;
 
